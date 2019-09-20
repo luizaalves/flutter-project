@@ -13,7 +13,7 @@ class ControllerService {
   Future<bool> verificarAcesso() async {  
     final response = await client.get("https://trial.msitec.com.br/sessao/amionline/",headers: headers());    
     if(response.headers['set-cookie']!=null){
-      cookies = response.headers['set-cookie'];
+      ControllerService.cookies = response.headers['set-cookie'];
     }
     return response.body=='true';
   }
@@ -21,7 +21,7 @@ class ControllerService {
   Future<bool> autenticar(String usuario,String senha) async {
     final response = await client.post("https://trial.msitec.com.br/sessao/reautenticar/",headers: headers(),body:jsonEncode({'usuario':{'usuario':usuario,'senha':senha}}));    
     if(response.headers['set-cookie']!=null){
-      cookies = response.headers['set-cookie'];
+      ControllerService.cookies = response.headers['set-cookie'];
     }
     return !(jsonDecode(response.body)['autenticar'] as bool);
   }
@@ -30,7 +30,7 @@ class ControllerService {
      return {
       'Content-type': 'application/json', 
       'Accept': 'application/json',
-      'Cookie': cookies
+      'Cookie': ControllerService.cookies
     };
   }
 

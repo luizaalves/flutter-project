@@ -1,6 +1,9 @@
 
 import 'dart:async';
+import 'dart:ffi';
+import 'dart:core';
 
+import 'package:controller/model.dart';
 import 'package:flutter/material.dart';
 import 'package:controller/controller.dart';
 
@@ -25,12 +28,15 @@ class Menu extends StatefulWidget {
 
 class _MenuState extends State<Menu> {
   ControllerService service = ControllerService();
+  static const int _BUSCAR_CONTAS_RECEBER=1,_BUSCAR_CONTAS_PAGAR=0;
+  
+  int _selectedIndex = _BUSCAR_CONTAS_PAGAR;
 
   @override
   Widget build(BuildContext context) {
 
     var futureBuilderPagar = new FutureBuilder(
-      future: _getData(0),
+      future: _getData(_BUSCAR_CONTAS_PAGAR),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
@@ -46,7 +52,7 @@ class _MenuState extends State<Menu> {
     );
 
     var futureBuilderReceber = new FutureBuilder(
-      future: _getData(1),
+      future: _getData(_BUSCAR_CONTAS_RECEBER),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
@@ -60,13 +66,13 @@ class _MenuState extends State<Menu> {
         }
       },
     );
-  int _selectedIndex = 0;
+  
 
     List<Widget> _widgetOptions = <Widget>[
       futureBuilderPagar,
       futureBuilderReceber,
     ];
-
+  
     void _onItemTapped(int index) {
       setState(() {
         _selectedIndex = index;
@@ -98,37 +104,24 @@ class _MenuState extends State<Menu> {
     );
   }
 
-  Future<List<String>> _getData(index) async {
-    ControllerService service = ControllerService();
-
-    await service.autenticar("root", "\$pass+rt@28");
-
-    var values;
-    if (index == 0) {
-      values = await service.contasPagar(0, 15);
-    }
-    else values = await service.contasReceber(0, 15);
-
-    List<String> itens = [];
-    if(values!=null) {
-      for(int i=0;i<values.length-1;i++){
-        String saldo = values[i].valor.toString();
-        if(index == 0) saldo = saldo.substring(1);
-        itens.add('Nome: ${values[i].colaborador.razaoSocial}\nValor: R\$ $saldo');
-      }
-    }
-    return itens;
+  Future<List<Lancamento>> _getData(index) async {
+    if (index == _BUSCAR_CONTAS_PAGAR) {
+     return service.contasPagar(0, 15);
+    }else if(index == _BUSCAR_CONTAS_RECEBER) {
+      return service.contasReceber(0, 15);
+    } 
+    return null;
   }
 
   Widget createListView(BuildContext context, AsyncSnapshot snapshot) {
-    List<String> values = snapshot.data;
+    List<Lancamento> lancamentos = snapshot.data;
     return new ListView.builder(
-        itemCount: values.length,
+        itemCount: lancamentos.length,
         itemBuilder: (BuildContext context, int index) {
           return new Column(
             children: <Widget>[
               new ListTile(
-                title: new Text(values[index]),
+                title: new Text("${lancamentos[index].colaborador.razaoSocial}\n${lancamentos[index].valor.abs()}"),
               ),
               new Divider(height: 2.0,),
             ],
