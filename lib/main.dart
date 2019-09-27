@@ -33,20 +33,6 @@ class LoginState extends State<Login>{
   var senha = TextEditingController();
   ControllerService service = ControllerService();
 
-/*
-@override
-  initState() {
-      super.initState();
-      service.autenticar("root", "\$pass+rt@28").then((autentica){
-        if(autentica){
-          Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Menu()),
-          );
-        }
-      }); //$pass+rt@27        
-  }*/
-
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
@@ -56,7 +42,6 @@ class LoginState extends State<Login>{
   }
   @override
   Widget build(BuildContext context) {
-    // Build a Form widget using the _formKey created above.
     return Form(
       key: _formKey,
       child: Column(
@@ -86,7 +71,6 @@ class LoginState extends State<Login>{
               }
               return null;              
             },
-            
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -94,7 +78,7 @@ class LoginState extends State<Login>{
               child: RaisedButton(
               onPressed: () async {
                 if (_formKey.currentState.validate()) {
-                    bool autentica = await service.autenticar(usuario.text,senha.text); //$pass+rt@29
+                    bool autentica = await service.autenticar(usuario.text,senha.text);
                   if(autentica){
                     Navigator.push(
                     context,
@@ -107,7 +91,6 @@ class LoginState extends State<Login>{
               child: Text('Login'),
             ),
             )
-            
           ),
         ],
       ),
