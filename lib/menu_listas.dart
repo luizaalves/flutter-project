@@ -1,8 +1,7 @@
 
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:core';
-
+import 'package:controller/login.dart';
 import 'package:controller/model.dart';
 import 'package:flutter/material.dart';
 import 'package:controller/controller.dart';
@@ -34,7 +33,6 @@ class _MenuState extends State<Menu> {
 
   @override
   Widget build(BuildContext context) {
-
     var futureBuilderPagar = new FutureBuilder(
       future: _getData(_BUSCAR_CONTAS_PAGAR),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -79,8 +77,16 @@ class _MenuState extends State<Menu> {
       });
     }
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("Lista de contas"),
+      appBar: AppBar(
+        title: new Text("Home"),
+        actions: <Widget>[
+          IconButton(
+              icon: new Icon(Icons.power_settings_new),
+              onPressed: () {
+                Navigator.of(context).pop(Login());
+              }
+            )
+        ],
       ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
@@ -94,7 +100,6 @@ class _MenuState extends State<Menu> {
           BottomNavigationBarItem(
             icon: Icon(Icons.work),
             title: Text('Contas a receber'),
-            
           ),
         ],
         currentIndex: _selectedIndex,
